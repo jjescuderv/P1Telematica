@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Middleware</title>
+</head>
+<body>
+<h1>Middleware canales Práctica 1</h1>
+<h3>Bienvenido {% if current_user.is_authenticated %}{{ current_user.username }}{% else %}Guest{% endif %}!</h3>
+
+{% if current_user.is_authenticated %}
+    <h3>Canales a los que estoy suscrito:</h3>
+    <ul>
+        {{ rooms }}
+        {% for room in rooms %}
+            <li><a href="/rooms/{{ room._id.room_id }}">{{ room.name }}</a></li>
+        {% endfor %}
+    </ul>
+{% endif %}
+</body>
+</html>
