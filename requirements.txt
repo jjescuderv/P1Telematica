@@ -1,0 +1,7 @@
+bson
+werkzeug
+flask
+"Flask-SocketIO<5.0.0"
+eventlet
+pymongo
+flask-login
