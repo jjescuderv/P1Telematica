@@ -86,7 +86,7 @@ def crear_canal():
             message = "Failed to create room"
     return render_template('crear_canal.html', message=message)
 
-#fsdafdfdsafhdjsalfjdslkaññflsa
+
 @app.route('/rooms/<room_id>/edit', methods=['GET', 'POST'])
 @login_required
 def edit_room(room_id):
@@ -112,7 +112,7 @@ def edit_room(room_id):
         return render_template('edit_room.html', room=room, room_members_str=room_members_str, message=message)
     else:
         return "Room not found", 404
-#gfdsdfgsafgadffgsafdGFASDFFSADFFDSAAFDFD
+
 
 @app.route('/rooms/<room_id>/')
 @login_required

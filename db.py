@@ -37,6 +37,11 @@ def save_room(room_name, created_by):
 def get_rooms_for_user(username):
     return list(coleccion_miembros.find({'_id.username': username}))
 
+
+def get_available_rooms(username):
+    pass
+
+
 def update_room(room_id, room_name):
     coleccion_canales.update_one({'_id': ObjectId(room_id)}, {'$set': {'name': room_name}})
     coleccion_miembros.update_many({'_id.room_id': ObjectId(room_id)}, {'$set': {'room_name': room_name}})
@@ -64,8 +69,6 @@ def remove_room_members(room_id, usernames):
 
 def get_room_members(room_id):
     return list(coleccion_miembros.find({'_id.room_id': ObjectId(room_id)}))
-
-
 
 
 def is_room_member(room_id, username):
