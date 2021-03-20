@@ -51,14 +51,10 @@ def get_rooms_for_user(username):
     rooms = query['rooms']
     return rooms
 
-
+# No terminado
 def get_available_rooms(username):
-    return list(coleccion_canales.find(  {'members': { "$nin": [username] }}  ))
-
-# No es necesario
-def update_room(room_id, room_name):
-    coleccion_canales.update_one({'_id': ObjectId(room_id)}, {'$set': {'name': room_name}})
-    coleccion_miembros.update_many({'_id.room_id': ObjectId(room_id)}, {'$set': {'room_name': room_name}})
+    query = coleccion_canales.find(  {}  )
+    return []
 
 
 def add_room_member(room_name, username):
