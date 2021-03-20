@@ -6,8 +6,8 @@ from flask_login import LoginManager, login_user, login_required, logout_user, c
 from flask_socketio import SocketIO, join_room, leave_room
 from pymongo.errors import DuplicateKeyError
 
-from db import get_user, save_user, save_room, add_room_members, get_rooms_for_user, get_room, is_room_member, \
-    get_room_members, is_room_admin, update_room, remove_room_members, save_message, get_messages
+from db import get_user, save_user, save_room, get_rooms_for_user, get_room, is_room_member, \
+    get_room_members, is_room_admin, update_room, remove_room_members, save_message, get_messages, get_available_rooms
 
 app = Flask(__name__)
 app.secret_key = "sfdjkafnk"
@@ -19,10 +19,13 @@ login_manager.init_app(app)
 
 @app.route('/')
 def home():
-    rooms = []
-    if current_user.is_authenticated():
-        rooms = get_rooms_for_user(current_user.username)
-    return render_template("index.html", rooms=rooms)
+    rooms_subscribed = []
+    rooms_available = []
+    if current_user.is_authenticated:
+        rooms_subscribed = get_rooms_for_user(current_user.username)
+        rooms_available = get_available_rooms(current_user.username)
+    
+    return render_template("index.html", rooms=rooms_subscribed, available=rooms_available)
 
 
 @app.route('/login', methods=['GET', 'POST'])
@@ -45,7 +48,7 @@ def login():
 
 
 @app.route('/registrarse', methods=['GET', 'POST'])
-def registrarse():
+def register():
     if current_user.is_authenticated:
         return redirect(url_for('home'))
 
@@ -67,24 +70,21 @@ def logout():
     logout_user()
     return redirect(url_for('home'))
 
-
-@app.route('/crear-canal/', methods=['GET', 'POST'])
+# Falta manejar duplicados con un try catch
+@app.route('/create-room/', methods=['GET', 'POST'])
 @login_required
-def crear_canal():
+def create_room():
     message = ''
     if request.method == 'POST':
         room_name = request.form.get('room_name')
-        usernames = [username.strip() for username in request.form.get('members').split(',')]
+        category = request.form.get('category')
 
-        if len(room_name) and len(usernames):
-            room_id = save_room(room_name, current_user.username)
-            if current_user.username in usernames:
-                usernames.remove(current_user.username)
-            add_room_members(room_id, room_name, usernames, current_user.username)
-            return redirect(url_for('view_room', room_id=room_id))
+        if room_name and category:
+            save_room(room_name, category, current_user.username)
+            return redirect(url_for('view_room', room_name=room_name))
         else:
             message = "Failed to create room"
-    return render_template('crear_canal.html', message=message)
+    return render_template('create_room.html', message=message)
 
 
 @app.route('/rooms/<room_id>/edit', methods=['GET', 'POST'])
@@ -114,26 +114,25 @@ def edit_room(room_id):
         return "Room not found", 404
 
 
-@app.route('/rooms/<room_id>/')
+@app.route('/rooms/<room_name>/')
 @login_required
-def view_room(room_id):
-    room = get_room(room_id)
-    if room and is_room_member(room_id, current_user.username):
-        room_members = get_room_members(room_id)
-        messages = get_messages(room_id)
-        return render_template('view_room.html', username=current_user.username, room=room, room_members=room_members,
-                               messages=messages)
+def view_room(room_name):
+    room = get_room(room_name)
+    if room and is_room_member(room_name, current_user.username):
+        room_members = get_room_members(room_name)
+        messages = get_messages(room_name)
+        return render_template('view_room.html', username=current_user.username, room=room, room_members=room_members, messages=messages)
     else:
         return "Room not found", 404
 
 
-@app.route('/rooms/<room_id>/messages/')
+@app.route('/rooms/<room_name>/messages/')
 @login_required
-def get_older_messages(room_id):
-    room = get_room(room_id)
-    if room and is_room_member(room_id, current_user.username):
+def get_older_messages(room_name):
+    room = get_room(room_name)
+    if room and is_room_member(room_name, current_user.username):
         page = int(request.args.get('page', 0))
-        messages = get_messages(room_id, page)
+        messages = get_messages(room_name, page)
         return dumps(messages)
     else:
         return "Room not found", 404
