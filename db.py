@@ -47,7 +47,9 @@ def get_room(room_name):
 
 
 def get_rooms_for_user(username):
-    return list(coleccion_usuarios.find(  {'_id.username': username}, {'rooms': 1}  ))
+    query = coleccion_usuarios.find_one(  {'_id': username}, {'_id': 0, 'rooms': 1}  )
+    rooms = query['rooms']
+    return rooms
 
 
 def get_available_rooms(username):
