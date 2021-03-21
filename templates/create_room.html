@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="en">
+
+    <head>
+        <meta charset="UTF-8">
+        <title>MOM canales</title>
+    </head>
+
+    <body>
+        <h1>Crear un nuevo canal</h1>
+        <h3>{{ message }}</h3>
+        <form method="post">
+            <label>Nombre del canal:</label>
+            <input type="text" name="room_name" required>
+            <br>
+            <label>Categoría:</label>
+            <select name="category" required>
+                <option selected value="deportes">Deportes</option>
+                <option value="tecnologia">Tecnología</option>
+                <option value="noticias">Noticias</option>
+                <option value="gastronomia">Gastronomía</option>
+                <option value="bolsa">Bolsa</option>
+            </select>
+            <br>
+            <button type="submit">Enviar</button>
+        </form>
+    </body>
+
+</html>
