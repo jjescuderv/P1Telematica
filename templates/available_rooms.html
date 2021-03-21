@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Middleware</title>
+</head>
+
+<body>
+    <h1>Listado de canales</h1>
+
+    <div id="messages">
+        {% for message in messages %}
+        <div><b>{{ message.sender }}&nbsp;[{{ message.created_at }}]:&nbsp;</b> {{ message.text }}</div>
+        {% endfor %}
+    </div>
+
+    <h3>Canales disponibles</h3>
+    <ul>
+        {% for room in available_rooms %}
+            <form method="POST">
+                <li>{{ room }} <button name="room_name" type="submit" value="{{ room }}">Suscribirse</button></li>
+            </form>
+        {% endfor %}
+    </ul>
+</body>
+
+</html>

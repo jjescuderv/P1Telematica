@@ -6,8 +6,8 @@ from flask_login import LoginManager, login_user, login_required, logout_user, c
 from flask_socketio import SocketIO, join_room, leave_room
 from pymongo.errors import DuplicateKeyError
 
-from db import get_user, save_user, save_room, get_rooms_for_user, get_room, is_room_member, \
-    get_room_members, is_room_admin, remove_room_members, save_message, get_messages, get_available_rooms
+from db import get_user, save_user, save_room, get_rooms_for_user, get_room, is_room_member, add_room_member, \
+               get_room_members, get_available_rooms, is_room_admin, remove_room_members, save_message, get_messages
 
 app = Flask(__name__)
 app.secret_key = "sfdjkafnk"
@@ -20,12 +20,12 @@ login_manager.init_app(app)
 @app.route('/')
 def home():
     rooms_subscribed = []
-    rooms_available = []
+    available_rooms = []
     if current_user.is_authenticated:
         rooms_subscribed = get_rooms_for_user(current_user.username)
-        rooms_available = get_available_rooms(current_user.username)
+        available_rooms = get_available_rooms(current_user.username)
     
-    return render_template("index.html", rooms=rooms_subscribed, available=rooms_available)
+    return render_template("index.html", rooms=rooms_subscribed, available_rooms=available_rooms)
 
 
 @app.route('/login', methods=['GET', 'POST'])
@@ -47,7 +47,7 @@ def login():
     return render_template('login.html', message=message)
 
 
-@app.route('/registrarse', methods=['GET', 'POST'])
+@app.route('/register', methods=['GET', 'POST'])
 def register():
     if current_user.is_authenticated:
         return redirect(url_for('home'))
@@ -81,13 +81,37 @@ def create_room():
 
         if room_name and category:
             save_room(room_name, category, current_user.username)
+            notification = 'Canal ' + str(room_name) + ' creado con éxito.'
             return redirect(url_for('view_room', room_name=room_name))
         else:
             message = "Failed to create room"
     return render_template('create_room.html', message=message)
 
 
-@app.route('/rooms/<room_id>/edit', methods=['GET', 'POST'])
+@app.route('/available-rooms', methods=['GET', 'POST'])
+@login_required
+def list_available_rooms():
+    message = ''
+    notification = ''
+
+    if request.method == 'POST':
+        room_name = request.form.get('room_name')
+        username = current_user.get_id()
+        available_rooms = get_available_rooms(current_user.get_id())
+        # Falta un try catch por si hay algun problema en la suscripción
+        #try
+        add_room_member(room_name, username)
+        notification = "Suscrito con éxito a " + str(room_name)
+        #catch
+        #message = "algun error"
+        print(notification)
+        return redirect(url_for('view_room', room_name=room_name))
+
+    available_rooms = get_available_rooms(current_user.get_id())
+    return render_template('available_rooms.html', message=message, available_rooms=available_rooms)
+
+
+@app.route('/rooms/<room_name>/edit', methods=['GET', 'POST'])
 @login_required
 def edit_room(room_id):
     room = get_room(room_id)
@@ -121,7 +145,7 @@ def view_room(room_name):
     if room and is_room_member(room_name, current_user.username):
         room_members = get_room_members(room_name)
         messages = get_messages(room_name)
-        return render_template('view_room.html', username=current_user.username, room=room, room_members=room_members, messages=messages)
+        return render_template('view_room.html', username=current_user.username, room=room, room_members=room_members, messages=messages, notification=notification)
     else:
         return "Room not found", 404
 

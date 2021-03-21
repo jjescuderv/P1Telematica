@@ -51,10 +51,15 @@ def get_rooms_for_user(username):
     rooms = query['rooms']
     return rooms
 
-# No terminado
+
 def get_available_rooms(username):
-    query = coleccion_canales.find(  {}  )
-    return []
+    query = coleccion_canales.find(  {}, {'_id': 1, 'members': 1}  )
+    available = []
+    for document in query:
+        if username not in document['members']:
+            available.append(document['_id'])
+
+    return available
 
 
 def add_room_member(room_name, username):
