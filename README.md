@@ -2,6 +2,6 @@
 
 Integrantes:
 
-Jhontan S. Acevedo Castrillón
-Juan J. Escudero Valencia
+Jhontan S. Acevedo Castrillón, 
+Juan J. Escudero Valencia, 
 Andrew S. Pérez Martínez
