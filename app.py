@@ -21,11 +21,13 @@ login_manager.init_app(app)
 def home():
     rooms_subscribed = []
     available_rooms = []
+    is_producer = False
     if current_user.is_authenticated:
         rooms_subscribed = get_rooms_for_user(current_user.username)
         available_rooms = get_available_rooms(current_user.username)
+        is_producer = current_user.producer
     
-    return render_template("index.html", rooms=rooms_subscribed, available_rooms=available_rooms)
+    return render_template("index.html", rooms=rooms_subscribed, available_rooms=available_rooms, producer=is_producer)
 
 
 @app.route('/login', methods=['GET', 'POST'])
@@ -193,3 +195,4 @@ def load_user(username):
 
 if __name__ == '__main__':
     socketio.run(app, debug=True)
+    #socketio.run(app, host="0.0.0.0", port=80, debug=True) #Ejecución en despliegue
