@@ -83,7 +83,7 @@ def create_room():
 
         if room_name and category:
             save_room(room_name, category, current_user.username)
-            notification = 'Canal ' + str(room_name) + ' creado con éxito.'
+            notification = 'Canal ' + str(room_name) + ' creado con exito.'
             return redirect(url_for('view_room', room_name=room_name))
         else:
             message = "Failed to create room"
@@ -100,10 +100,10 @@ def list_available_rooms():
         room_name = request.form.get('room_name')
         username = current_user.get_id()
         available_rooms = get_available_rooms(current_user.get_id())
-        # Falta un try catch por si hay algun problema en la suscripción
+        # Falta un try catch por si hay algun problema en la suscripcion
         #try
         add_room_member(room_name, username)
-        notification = "Suscrito con éxito a " + str(room_name)
+        notification = "Suscrito con exito a " + str(room_name)
         #catch
         #message = "algun error"
         print(notification)
@@ -195,4 +195,4 @@ def load_user(username):
 
 if __name__ == '__main__':
     socketio.run(app, debug=True)
-    #socketio.run(app, host="0.0.0.0", port=80, debug=True) #Ejecución en despliegue
+    #socketio.run(app, host="0.0.0.0", port=80, debug=True) #Ejecucion en despliegue
