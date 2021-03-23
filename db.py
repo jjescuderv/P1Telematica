@@ -16,24 +16,15 @@ coleccion_usuarios = middle_DB.get_collection("usuarios")
 coleccion_canales = middle_DB.get_collection("canales")
 coleccion_mensajes = middle_DB.get_collection("mensajes")
 
-""" coleccion_test = middle_DB.get_collection("test")
-
-def save_test(username):
-    coleccion_test.insert_one({'_id': username, 'password': 'asd', 'channels': []})
-
-
-def append_test(username):
-    coleccion_test.update_one({'_id': username}, {"$push": {'channels': username}}) """
-
 
 def save_user(username, password):
     password_hash = generate_password_hash(password)
-    coleccion_usuarios.insert_one(  {'_id': username, 'password': password_hash, 'rooms': []}  )
+    coleccion_usuarios.insert_one(  {'_id': username, 'password': password_hash, 'rooms': [], 'producer': False }  )
 
 
 def get_user(username):
     user_data = coleccion_usuarios.find_one(  {'_id': username}  )
-    return User(user_data['_id'], user_data['password']) if user_data else None
+    return User(user_data['_id'], user_data['password'], user_data['producer']) if user_data else None
 
 
 def save_room(room_name, category, created_by):

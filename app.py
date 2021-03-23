@@ -145,7 +145,7 @@ def view_room(room_name):
     if room and is_room_member(room_name, current_user.username):
         room_members = get_room_members(room_name)
         messages = get_messages(room_name)
-        return render_template('view_room.html', username=current_user.username, room=room, room_members=room_members, messages=messages, notification=notification)
+        return render_template('view_room.html', username=current_user.username, room=room, room_members=room_members, messages=messages, producer=current_user.producer)
     else:
         return "Room not found", 404
 

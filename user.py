@@ -3,10 +3,11 @@ from werkzeug.security import check_password_hash
 
 class User:
 
-    def __init__(self, username, password):
+    def __init__(self, username, password, producer):
         self.username = username
         self.password = password
         self.rooms = []
+        self.producer = producer
 
     @staticmethod
     def is_authenticated():

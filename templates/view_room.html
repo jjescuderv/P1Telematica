@@ -15,10 +15,19 @@
     {% endfor %}
 </div>
 
+
 <form id="message_input_form">
-    <input type="text" id="message_input" placeholder="Enter your message here">
-    <button type="submit">Enviar</button>
+    {% if producer %}
+        <input type="text" id="message_input" placeholder="Enter your message here">
+        <button type="submit">Enviar</button>
+    {% else %}
+        <h4>A la espera de mensajes!</h4>
+    {% endif %}
 </form>
+
+
+    
+
 
 
 <h3>Miembros</h3>
